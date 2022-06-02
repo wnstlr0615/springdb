@@ -2,14 +2,15 @@ package com.example.springdb.service;
 
 import com.example.springdb.domain.Member;
 import com.example.springdb.repository.MemberRepository;
-import com.example.springdb.repository.MemberRepositoryV4_1;
 import com.example.springdb.repository.MemberRepositoryV4_2;
+import com.example.springdb.repository.MemberRepositoryV5;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -25,14 +26,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 @Slf4j
 @SpringBootTest
-class MemberServiceV4Test {
+class MemberServiceV5Test {
     public static final String MEMBER_A = "memberA";
     public static final String MEMBER_B = "memberB";
     public static final String MEMBER_EX= "ex";
 
+    @Qualifier("memberRepositoryV5")
     @Autowired
     private MemberRepository memberRepository;
 
+    @Qualifier("memberServiceV4")
     @Autowired
     private MemberServiceV4 memberService;
 
@@ -41,12 +44,12 @@ class MemberServiceV4Test {
     static class TestConfig{
        private final  DataSource dataSource;
         @Bean
-        MemberRepository memberRepositoryV4(){
-            return new MemberRepositoryV4_2(dataSource);
+        MemberRepository memberRepositoryV5(){
+            return new MemberRepositoryV5(dataSource);
         }
         @Bean
-        MemberServiceV4 memberServiceV3_3(){
-            return new MemberServiceV4(memberRepositoryV4());
+        MemberServiceV4 memberServiceV4(){
+            return new MemberServiceV4(memberRepositoryV5());
         }
     }
     @AfterEach
